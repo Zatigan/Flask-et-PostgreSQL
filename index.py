@@ -21,6 +21,7 @@ def get_connection():
 def index():
  return 'Voici mon super garage tautomobile !'
 
+# Route pour accéder à toutes les voitures
 @app.route('/cars', methods=['GET'])
 def get_all_cars():
  connection = get_connection()
@@ -34,6 +35,7 @@ def get_all_cars():
 
  return jsonify(cars)
 
+# Route pour accéder à une voiture par son id
 @app.route('/cars/<int:id>', methods=['GET'])
 def getCarById(id):
  connection = get_connection()
@@ -46,3 +48,17 @@ def getCarById(id):
  connection.close()
 
  return jsonify(oneCar)
+
+# Route pour accéder à toutes les voitures par leur marque
+@app.route('/cars/<string:brand>', methods=['GET'])
+def getCarsByBrand(brand):
+ connection = get_connection()
+ cursor = connection.cursor()
+
+ cursor.execute('SELECT * FROM car WHERE brand = %s', (brand,))
+ carsByBrand = cursor.fetchmany(5)
+
+ cursor.close()
+ connection.close()
+
+ return jsonify(carsByBrand)
