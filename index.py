@@ -111,7 +111,26 @@ def updateOneCar(id):
   cursor.close()
   connection.close()
 
-  return jsonify(updatedCar), 201
+  return jsonify(updatedCar), 202
  
  else:
   return 'Aucune donnée soumise à mettre à jour', 400
+ 
+ # Route pour supprimer une voiture
+@app.route('/cars/<int:id>', methods=['DELETE'])
+def deleteCar(id):
+ connection = get_connection()
+ cursor = connection.cursor()
+
+ cursor.execute('DELETE FROM car WHERE car_id = %s RETURNING *', (id,))
+ deletedCar = cursor.fetchone()
+
+ connection.commit()
+ 
+ cursor.close()
+ connection.close()
+
+ if deletedCar:
+  return 'Voiture supprimée', 200
+ else:
+  return "Voiture non trouvée", 404
