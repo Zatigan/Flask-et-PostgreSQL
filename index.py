@@ -21,7 +21,7 @@ def get_connection():
 def index():
  return 'Voici mon super garage tautomobile !'
 
-@app.route('/cars')
+@app.route('/cars', methods=['GET'])
 def get_all_cars():
  connection = get_connection()
  cursor = connection.cursor()
@@ -34,3 +34,15 @@ def get_all_cars():
 
  return jsonify(cars)
 
+@app.route('/cars/<int:id>', methods=['GET'])
+def getCarById(id):
+ connection = get_connection()
+ cursor = connection.cursor()
+
+ cursor.execute('SELECT * FROM car WHERE car_id = %s', (id,))
+ oneCar = cursor.fetchone()
+
+ cursor.close()
+ connection.close()
+
+ return jsonify(oneCar)
