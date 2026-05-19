@@ -14,6 +14,21 @@ def get_connection():
   cursor_factory=RealDictCursor
  )
 
+# Route pour l'accueil
 @app.route(('/'))
 def index():
  return 'Bienvenue dans mon API Flask'
+
+# Route pour afficher tous les livres
+@app.route('/books', methods=['GET'])
+def get_book_list():
+ connection = get_connection()
+ cursor = connection.cursor()
+
+ cursor.execute('SELECT * FROM book ORDER BY book_id')
+ books = cursor.fetchall()
+
+ cursor.close()
+ connection.close()
+
+ return jsonify(books)
