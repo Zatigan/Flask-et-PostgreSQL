@@ -50,7 +50,7 @@ def getCarById(id):
  return jsonify(oneCar)
 
 # Route pour accéder à toutes les voitures par leur marque
-@app.route('/cars/<string:brand>', methods=['GET'])
+@app.route('/cars/brand/<string:brand>', methods=['GET'])
 def getCarsByBrand(brand):
  connection = get_connection()
  cursor = connection.cursor()
@@ -62,3 +62,25 @@ def getCarsByBrand(brand):
  connection.close()
 
  return jsonify(carsByBrand)
+
+# Route pour ajouter un modèle de voiture
+@app.route('/cars', methods=['POST'])
+def addOneCar():
+ data = request.get_json()
+
+ brand = data['brand']
+ model = data['model']
+
+ connection = get_connection()
+ cursor = connection.cursor()
+
+ cursor.execute('INSERT INTO car (brand, model) VALUES (%s, %s) RETURNING *', (brand, model))
+
+ car = cursor.fetchone()
+
+ connection.commit()
+
+ cursor.close()
+ connection.close()
+
+ return jsonify(car), 201
