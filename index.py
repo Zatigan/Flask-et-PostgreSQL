@@ -84,3 +84,34 @@ def addOneCar():
  connection.close()
 
  return jsonify(car), 201
+
+# Route pour mettre à jour une voiture
+@app.route('/cars/<int:id>', methods=['PUT'])
+def updateOneCar(id):
+ data = request.get_json()
+
+ brand = data.get('brand')
+ model = data.get('model')
+
+ connection = get_connection()
+ cursor = connection.cursor()
+
+ if brand or model:
+
+  if brand:
+   cursor.execute('UPDATE car SET brand = %s WHERE car_id = %s RETURNING *', (brand, id,))
+   updatedCar = cursor.fetchone()
+   connection.commit()
+
+  if model:
+   cursor.execute('UPDATE car SET model = %s WHERE car_id = %s RETURNING *', (model, id,))
+   updatedCar = cursor.fetchone()
+   connection.commit()
+
+  cursor.close()
+  connection.close()
+
+  return jsonify(updatedCar), 201
+ 
+ else:
+  return 'Aucune donnée soumise à mettre à jour', 400
