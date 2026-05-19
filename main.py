@@ -15,7 +15,7 @@ def get_connection():
  )
 
 # Route pour l'accueil
-@app.route(('/'))
+@app.route('/')
 def index():
  return 'Bienvenue dans mon API Flask'
 
@@ -32,3 +32,20 @@ def get_book_list():
  connection.close()
 
  return jsonify(books)
+
+# Route pour afficher un seul livre
+@app.route('/books/<int:id>', methods=['GET'])
+def get_book(id):
+ connection = get_connection()
+ cursor = connection.cursor()
+
+ cursor.execute('SELECT * FROM book WHERE book_id = %s', (id,))
+ book = cursor.fetchone()
+
+ cursor.close()
+ connection.close()
+
+ if book:
+  return jsonify(book)
+ else:
+  return 'Livre non trouvé', 404
