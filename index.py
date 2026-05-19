@@ -10,9 +10,27 @@ def get_connection():
  return psycopg2.connect(
   host='localhost',
   database='flask_garage',
-  user='libadm1475',
+  user='garadm7841',
   password='SP7c3$@uwL84jmSEoP3',
   port=5432,
   cursor_factory=RealDictCursor
  )
+
+# Route pour accéder à la 1e page
+@app.route('/')
+def index():
+ return 'Voici mon super garage tautomobile !'
+
+@app.route('/cars')
+def get_all_cars():
+ connection = get_connection()
+ cursor = connection.cursor()
+ 
+ cursor.execute('SELECT * FROM car')
+ cars = cursor.fetchall()
+
+ cursor.close()
+ connection.close()
+
+ return jsonify(cars)
 
